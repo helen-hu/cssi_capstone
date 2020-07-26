@@ -1,27 +1,65 @@
 console.log('script running');
 
-let c, bColor;
+let control;
+let isActive;
 
 function setup() {
   createCanvas(300, 300);
   colorMode(HSB, 360, 100, 100);
   noStroke();
-  bColor = 100;
-  c = 0;
+
+  control = new Control();
+
+  isActive = true;
 }
 
 function draw() {
-  background(bColor);
-
-  fill(c, 40, 75);
+  background(95);
+  fill(240, 40, 75);
   circle(width/2, height/2, 100);
-  c = (c+1)%360;
 
-  if (collidePointCircle(mouseX, mouseY, width/2, height/2, 100)) {
-    console.log('hit');
-    bColor = 10;
+  if (isActive) {
+    checkCondition();
+    control.display();
+  }
+}
+
+function checkCondition() {
+  //modify this to check if touching face
+  if (collidePointCircle(mouseX, mouseY, width/2, height/2, 100)) { 
+    control.setTrue();
   }
   else {
-    bColor = 90;
+    control.setFalse();
+  }
+}
+
+class Control {
+  constructor() {
+    this.isTouched = false;
+  }
+  getBool() {
+    return this.isTouched;
+  }
+  setTrue() {
+    this.isTouched = true;
+  }
+  setFalse() {
+    this.isTouched = false;
+  }
+  display() {
+    if (this.isTouched) {
+      this.displayTrue();
+    }
+    else {
+      this.displayFalse();
+    }
+  }
+  //modify these methods
+  displayTrue() {
+    text('stop touching face!', 50, 50);
+  }
+  displayFalse() {
+    text('nice job :)', 50, 50);
   }
 }

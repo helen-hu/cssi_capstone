@@ -12,6 +12,6 @@
     "browser_action": {
         "default_icon": "cat.png",
         "default_popup": "popup_test/index.html",
-        "default_title": "A popup here"
+        "default_title": "popup description here"
     }
 }
