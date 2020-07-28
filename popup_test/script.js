@@ -5,6 +5,13 @@ let label;
 
 let control;
 let isActive;
+var myAudio = new Audio();
+// let SoundLoop;
+
+// function looping(timeFromNow) {
+//   looper.interval = 1;
+//   myAudio.play(timeFromNow)
+// }
 
 function setup() {
   createCanvas(300, 300);
@@ -12,7 +19,9 @@ function setup() {
   noStroke();
 
   control = new Control();
-
+  myAudio.src = chrome.runtime.getURL("stop.mp3");
+  //looper.start();
+  myAudio.play();
   isActive = true;
 }
 
@@ -45,6 +54,7 @@ function checkCondition() {
   }
   else {
     control.setFalse();
+    
   }
 }
 
