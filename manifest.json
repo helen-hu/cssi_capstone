@@ -17,6 +17,6 @@
     },
     "permissions": ["storage"],
     "web_accessible_resources": [
-        "stop.mp3"
+        "song.mp3"
     ]
 }

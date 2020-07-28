@@ -19,9 +19,8 @@ function setup() {
   noStroke();
 
   control = new Control();
-  myAudio.src = chrome.runtime.getURL("stop.mp3");
+  myAudio.src = chrome.runtime.getURL("song.mp3");
   //looper.start();
-  myAudio.play();
   isActive = true;
 }
 
@@ -74,6 +73,7 @@ class Control {
   display() {
     if (this.isTouched) {
       this.displayTrue();
+      // myAudio.play();
     }
     else {
       this.displayFalse();
@@ -82,9 +82,12 @@ class Control {
   //modify these methods
   displayTrue() {
     text('stop touching face!', 50, 50);
+    myAudio.play();
   }
   displayFalse() {
     text('nice job :)', 50, 50);
+    myAudio.pause();
+    myAudio.currentTime = 0;
   }
 }
 
