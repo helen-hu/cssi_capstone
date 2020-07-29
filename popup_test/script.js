@@ -5,7 +5,6 @@ let label;
 
 let control;
 let isActive;
-var myAudio = new Audio();
 // let SoundLoop;
 
 // function looping(timeFromNow) {
@@ -19,7 +18,6 @@ function setup() {
   noStroke();
 
   control = new Control();
-  myAudio.src = chrome.runtime.getURL("song.mp3");
   //looper.start();
   isActive = true;
 }
@@ -45,51 +43,51 @@ function draw() {
   text(label, 100, 250);
 }
 
-function checkCondition() {
-  //modify this to check if touching face
-  // if (collidePointCircle(mouseX, mouseY, width/2, height/2, 100)) { 
-  if (label == 'Touching') {
-    control.setTrue();
-  }
-  else {
-    control.setFalse();
+// function checkCondition() {
+//   //modify this to check if touching face
+//   // if (collidePointCircle(mouseX, mouseY, width/2, height/2, 100)) { 
+//   if (label == 'Touching') {
+//     control.setTrue();
+//   }
+//   else {
+//     control.setFalse();
     
-  }
-}
+//   }
+// }
 
-class Control {
-  constructor() {
-    this.isTouched = false;
-  }
-  getBool() {
-    return this.isTouched;
-  }
-  setTrue() {
-    this.isTouched = true;
-  }
-  setFalse() {
-    this.isTouched = false;
-  }
-  display() {
-    if (this.isTouched) {
-      this.displayTrue();
-      // myAudio.play();
-    }
-    else {
-      this.displayFalse();
-    }
-  }
-  //modify these methods
-  displayTrue() {
-    text('stop touching face!', 50, 50);
-    myAudio.play();
-  }
-  displayFalse() {
-    text('nice job :)', 50, 50);
-    myAudio.pause();
-    myAudio.currentTime = 0;
-  }
-}
+// class Control {
+//   constructor() {
+//     this.isTouched = false;
+//   }
+//   getBool() {
+//     return this.isTouched;
+//   }
+//   setTrue() {
+//     this.isTouched = true;
+//   }
+//   setFalse() {
+//     this.isTouched = false;
+//   }
+//   display() {
+//     if (this.isTouched) {
+//       this.displayTrue();
+//       // myAudio.play();
+//     }
+//     else {
+//       this.displayFalse();
+//     }
+//   }
+//   //modify these methods
+//   displayTrue() {
+//     text('stop touching face!', 50, 50);
+//     myAudio.play();
+//   }
+//   displayFalse() {
+//     text('nice job :)', 50, 50);
+//     myAudio.pause();
+//     myAudio.currentTime = 0;
+//   }
+// }
 
 //
 // let capture;
