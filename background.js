@@ -13,21 +13,6 @@ chrome.runtime.onInstalled.addListener((details) => {
   });
 });
 
-//code from github project
-// Setup webcam, initialize the KNN classifier model and start the work loop.
-// async function setupCam() {
-//   navigator.mediaDevices.getUserMedia({
-//     video: true
-//   }).then(mediaStream => {
-//     vid.srcObject = mediaStream;
-//   }).catch((error) => {
-//     console.warn(error);
-//   });
-//   await classifier.load();
-//   setTimeout(loop, 50);
-// }
-
-
 // chrome.storage.local.get('camAccess', items => {
 //   if (!!items['camAccess']) {
 //     console.log('cam access already exists');
@@ -42,6 +27,20 @@ chrome.runtime.onInstalled.addListener((details) => {
 //     setupCam();
 //   }
 // });
+
+//code from github project
+// Setup webcam, initialize the KNN classifier model and start the work loop.
+// async function setupCam() {
+//   navigator.mediaDevices.getUserMedia({
+//     video: true
+//   }).then(mediaStream => {
+//     vid.srcObject = mediaStream;
+//   }).catch((error) => {
+//     console.warn(error);
+//   });
+//   await classifier.load();
+//   setTimeout(loop, 50);
+// }
 
 
 
@@ -61,49 +60,46 @@ let label = "";
 function preload() {
   console.log('preloading');
   classifier = ml5.imageClassifier(imageModelURL + 'model.json');
-  console.log(classifier);
+  //console.log(classifier);
 }
 
+function setup() {
+    console.log('background setup');
+    // createCanvas(320, 260);
+    // Create the video
+    video = createCapture(VIDEO, () =>
+    {console.log('done loading')});
 
+    // video = mediaStream;
+    //video.size(320, 240);
+    video.hide();
 
-// function setup() {
-//     console.log('background setup');
-//     // createCanvas(320, 260);
-//     // Create the video
-//     video = createCapture(VIDEO, () =>
-//     {console.log('done loading')});
-
-//     video = mediaStream;
-//     video.size(320, 240);
-//     video.hide();
-
-//     console.log(video)
-//     console.log('before flipped');
-//     flippedVideo = ml5.flipImage(video);
-//     console.log('got video');
-//     // console.log(flippedVideo);
-//     // Start classifying
-//     classifyVideo();
-// }
-
+    //console.log(video)
+    console.log('before flipped');
+    flippedVideo = ml5.flipImage(video);
+    console.log('got video');
+    // console.log(flippedVideo);
+    // Start classifying
+    classifyVideo();
+}
 
 //code from createCapture reference page
-function setup() {
-  createCanvas(480, 120);
-  let constraints = {
-    video: {
-      mandatory: {
-        minWidth: 800,
-        minHeight: 720
-      },
-      optional: [{ maxFrameRate: 10 }]
-    },
-    audio: true
-  };
-  createCapture(constraints, function(stream) {
-    console.log(stream);
-  });
-}
+// function setup() {
+//   createCanvas(10, 10);
+//   let constraints = {
+//     video: {
+//       mandatory: {
+//         minWidth: 10,
+//         minHeight: 10
+//       },
+//       optional: [{ maxFrameRate: 10 }]
+//     },
+//     audio: true
+//   };
+//   createCapture(constraints, function(stream) {
+//     console.log(stream);
+//   });
+// }
 
 function draw() {
     console.log('drawing');
@@ -121,13 +117,14 @@ function draw() {
 // Get a prediction for the current video frame
 function classifyVideo() {
     console.log('classifying');
-    // flippedVideo = ml5.flipImage(video)
+    flippedVideo = ml5.flipImage(video)
     classifier.classify(video, gotResult);
-    // flippedVideo.remove();
-    // console.log(flippedVideo);
+    flippedVideo.remove();
+    console.log(flippedVideo);
     console.log(gotResult);
-    console.log(video);
+    //console.log(video);
     console.log('done classifying');
+    //console.log(label);
 }
 
 // When we get a result
@@ -141,7 +138,6 @@ function gotResult(error, results) {
     // The results are in an array ordered by confidence.
     console.log(results[0]);
     label = results[0].label;
-    console.log(label);
     // Classify again!
     classifyVideo();
 }
@@ -152,9 +148,21 @@ chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.greeting == "hello")
       console.log('sending response');
+      console.log(label);
       sendResponse({label: label});
   });
 
+  // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  //   chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
+  //     console.log(response.farewell);
+  //   });
+  // });
+
+  // chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+  //   console.log(response.farewell);
+  // });
+
+  
 
 
 
