@@ -5,32 +5,14 @@ console.log('background running');
 // bruh this works!
 // Do first-time setup to gain access to webcam, if necessary.
 chrome.runtime.onInstalled.addListener((details) => {
-    if (details.reason.search(/install/g) === -1) {
-      return;
-    }
-    chrome.tabs.create({
-      url: chrome.extension.getURL('welcome.html'),
-      active: true
-    });
+  if (details.reason.search(/install/g) === -1) {
+    return;
+  }
+  chrome.tabs.create({
+  url: chrome.extension.getURL('welcome.html'),
+  active: true
+  });
 });
-  
-
-let capture;
-
-function setup() {
-  
-  createCanvas(300, 300);
-  capture = createCapture(VIDEO);
-  capture.size(320, 240);
-  //capture.hide();
-}
-
-function draw() {
-  background(255);
-  image(capture, 300, 300, 320, 240);
-}
-
-let isNewWindow = false;
 
 
 // Classifier Variable
@@ -57,9 +39,11 @@ function setup() {
     video.size(320, 240);
     video.hide();
 
+    console.log(video)
     console.log('before flipped');
     flippedVideo = ml5.flipImage(video);
     console.log('got video');
+    // console.log(flippedVideo);
     // Start classifying
     classifyVideo();
 }
@@ -80,10 +64,12 @@ function draw() {
 // Get a prediction for the current video frame
 function classifyVideo() {
     console.log('classifying');
-    flippedVideo = ml5.flipImage(video)
-    classifier.classify(flippedVideo, gotResult);
-    flippedVideo.remove();
-    console.log(flippedVideo);
+    // flippedVideo = ml5.flipImage(video)
+    classifier.classify(video, gotResult);
+    // flippedVideo.remove();
+    // console.log(flippedVideo);
+    console.log(gotResult);
+    console.log(video);
     console.log('done classifying');
 }
 
@@ -102,6 +88,16 @@ function gotResult(error, results) {
     // Classify again!
     classifyVideo();
 }
+
+
+//listens to message from content script; responds with label
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.greeting == "hello")
+      console.log('sending response');
+      sendResponse({label: label});
+  });
+
 
 
 
