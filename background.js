@@ -1,7 +1,6 @@
 console.log('background running');
 
 
-
 // bruh this works!
 // Do first-time setup to gain access to webcam, if necessary.
 chrome.runtime.onInstalled.addListener((details) => {
@@ -13,6 +12,38 @@ chrome.runtime.onInstalled.addListener((details) => {
   active: true
   });
 });
+
+//code from github project
+// Setup webcam, initialize the KNN classifier model and start the work loop.
+// async function setupCam() {
+//   navigator.mediaDevices.getUserMedia({
+//     video: true
+//   }).then(mediaStream => {
+//     vid.srcObject = mediaStream;
+//   }).catch((error) => {
+//     console.warn(error);
+//   });
+//   await classifier.load();
+//   setTimeout(loop, 50);
+// }
+
+
+// chrome.storage.local.get('camAccess', items => {
+//   if (!!items['camAccess']) {
+//     console.log('cam access already exists');
+//     setupCam();
+//   }
+// });
+
+// // If cam acecss gets granted to this extension, setup webcam.
+// chrome.storage.onChanged.addListener((changes, namespace) => {
+//   if ('camAccess' in changes) {
+//     console.log('cam access granted');
+//     setupCam();
+//   }
+// });
+
+
 
 
 // Classifier Variable
@@ -28,24 +59,50 @@ let label = "";
 
 // Load the model first
 function preload() {
-classifier = ml5.imageClassifier(imageModelURL + 'model.json');
+  console.log('preloading');
+  classifier = ml5.imageClassifier(imageModelURL + 'model.json');
+  console.log(classifier);
 }
 
-function setup() {
-    console.log('background setup');
-    // createCanvas(320, 260);
-    // Create the video
-    video = createCapture(VIDEO);
-    video.size(320, 240);
-    video.hide();
 
-    console.log(video)
-    console.log('before flipped');
-    flippedVideo = ml5.flipImage(video);
-    console.log('got video');
-    // console.log(flippedVideo);
-    // Start classifying
-    classifyVideo();
+
+// function setup() {
+//     console.log('background setup');
+//     // createCanvas(320, 260);
+//     // Create the video
+//     video = createCapture(VIDEO, () =>
+//     {console.log('done loading')});
+
+//     video = mediaStream;
+//     video.size(320, 240);
+//     video.hide();
+
+//     console.log(video)
+//     console.log('before flipped');
+//     flippedVideo = ml5.flipImage(video);
+//     console.log('got video');
+//     // console.log(flippedVideo);
+//     // Start classifying
+//     classifyVideo();
+// }
+
+
+//code from createCapture reference page
+function setup() {
+  createCanvas(480, 120);
+  let constraints = {
+    video: {
+      mandatory: {
+        minWidth: 800,
+        minHeight: 720
+      },
+      optional: [{ maxFrameRate: 10 }]
+    },
+    audio: true
+  };
+  createCapture(constraints, function(stream) {
+    console.log(stream);
+  });
 }
 
 function draw() {
