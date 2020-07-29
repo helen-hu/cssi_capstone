@@ -2,7 +2,9 @@
     "manifest_version": 2,
     "name": "CSSI extension",
     "version": "0.1",
+    
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    
     "content_scripts": [{
         "matches": ["<all_urls>"],
         "js": ["libraries/p5.js", "libraries/ml5.min.js", "libraries/p5.dom.min.js", "script.js"]

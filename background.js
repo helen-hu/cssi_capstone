@@ -15,22 +15,22 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
   
 
-// let capture;
+let capture;
 
-// function setup() {
-//   
-//   createCanvas(300, 300);
-//   capture = createCapture(VIDEO);
-//   capture.size(320, 240);
-//   //capture.hide();
-// }
+function setup() {
+  
+  createCanvas(300, 300);
+  capture = createCapture(VIDEO);
+  capture.size(320, 240);
+  //capture.hide();
+}
 
-// function draw() {
-//   background(255);
-//   image(capture, 300, 300, 320, 240);
-// }
+function draw() {
+  background(255);
+  image(capture, 300, 300, 320, 240);
+}
 
-// let isNewWindow = false;
+let isNewWindow = false;
 
 
 // Classifier Variable
@@ -51,15 +51,17 @@ classifier = ml5.imageClassifier(imageModelURL + 'model.json');
 
 function setup() {
     console.log('background setup');
-createCanvas(320, 260);
-// Create the video
-video = createCapture(VIDEO);
-video.size(320, 240);
-video.hide();
+    // createCanvas(320, 260);
+    // Create the video
+    video = createCapture(VIDEO);
+    video.size(320, 240);
+    video.hide();
 
-flippedVideo = ml5.flipImage(video);
-// Start classifying
-classifyVideo();
+    console.log('before flipped');
+    flippedVideo = ml5.flipImage(video);
+    console.log('got video');
+    // Start classifying
+    classifyVideo();
 }
 
 function draw() {
@@ -77,31 +79,34 @@ function draw() {
 
 // Get a prediction for the current video frame
 function classifyVideo() {
-flippedVideo = ml5.flipImage(video)
-classifier.classify(flippedVideo, gotResult);
-flippedVideo.remove();
-
+    console.log('classifying');
+    flippedVideo = ml5.flipImage(video)
+    classifier.classify(flippedVideo, gotResult);
+    flippedVideo.remove();
+    console.log(flippedVideo);
+    console.log('done classifying');
 }
 
 // When we get a result
 function gotResult(error, results) {
-// If there is an error
-if (error) {
-    console.error(error);
-    return;
-}
-// The results are in an array ordered by confidence.
-console.log(results[0]);
-label = results[0].label;
-console.log(label);
-// Classify again!
-classifyVideo();
+    console.log('getting results');
+    // If there is an error
+    if (error) {
+        console.error(error);
+        return;
+    }
+    // The results are in an array ordered by confidence.
+    console.log(results[0]);
+    label = results[0].label;
+    console.log(label);
+    // Classify again!
+    classifyVideo();
 }
 
 
 
 // don't delete this bc i might use the format later
-//tries to send message to current tab when a new window is opened. doesn't get received by the tab.
+// tries to send message to current tab when a new window is opened. doesn't get received by the tab.
 // chrome.windows.onCreated.addListener(newWindow);
 
 // function newWindow(window) {
@@ -125,6 +130,25 @@ classifyVideo();
 
 
 
+
+// test to see if the video itself works.
+// let capture;
+
+// function setup() {
+//     console.log('setting up');
+//   createCanvas(300, 300);
+//   capture = createCapture(VIDEO);
+//   capture.size(320, 240);
+//   //capture.hide();
+
+//   console.log(capture);
+// }
+
+// function draw() {
+
+// //   background(255);
+// //   image(capture, 300, 300, 320, 240);
+// }
 
 
 
