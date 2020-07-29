@@ -1,3 +1,7 @@
+// this was in background in the json file-- json doesn't support comments rip
+// "scripts": ["libraries/p5.js", "background.js"],
+
+
 console.log('my new cssi extension!');
 
 
@@ -7,11 +11,6 @@ chrome.runtime.onMessage.addListener(
         console.log(message);
     }
 );
-
-
-
-
-
 
 
 let capture;
