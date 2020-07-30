@@ -3,15 +3,15 @@ console.log('background running');
 
 // bruh this works!
 // Do first-time setup to gain access to webcam, if necessary.
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason.search(/install/g) === -1) {
-    return;
-  }
-  chrome.tabs.create({
-  url: chrome.extension.getURL('welcome.html'),
-  active: true
-  });
-});
+// chrome.runtime.onInstalled.addListener((details) => {
+//   if (details.reason.search(/install/g) === -1) {
+//     return;
+//   }
+//   chrome.tabs.create({
+//   url: chrome.extension.getURL('welcome.html'),
+//   active: true
+//   });
+// });
 
 // chrome.storage.local.get('camAccess', items => {
 //   if (!!items['camAccess']) {
@@ -54,7 +54,7 @@ let imageModelURL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
 let video;
 let flippedVideo;
 // To store the classification
-let label = "";
+let label;
 
 // Load the model first
 function preload() {
@@ -81,6 +81,7 @@ function setup() {
     // console.log(flippedVideo);
     // Start classifying
     classifyVideo();
+    label = 'temp label from background';
 }
 
 //code from createCapture reference page
@@ -114,33 +115,38 @@ function draw() {
 // text(label, width / 2, height - 4);
 }
 
+
+// When we get a result
+function gotResult(error, results) {
+  console.log('getting results');
+  // If there is an error
+  if (error) {
+      console.error(error);
+      return;
+  }
+  // The results are in an array ordered by confidence.
+  console.log(results[0]);
+  label = results[0].label;
+  // Classify again!
+  classifyVideo();
+}
+
+
 // Get a prediction for the current video frame
 function classifyVideo() {
     console.log('classifying');
-    flippedVideo = ml5.flipImage(video)
+    flippedVideo = ml5.flipImage(video);
+    console.log(gotResult);
     classifier.classify(video, gotResult);
     flippedVideo.remove();
     console.log(flippedVideo);
-    console.log(gotResult);
+    
     //console.log(video);
     console.log('done classifying');
     //console.log(label);
 }
 
-// When we get a result
-function gotResult(error, results) {
-    console.log('getting results');
-    // If there is an error
-    if (error) {
-        console.error(error);
-        return;
-    }
-    // The results are in an array ordered by confidence.
-    console.log(results[0]);
-    label = results[0].label;
-    // Classify again!
-    classifyVideo();
-}
+
 
 
 //listens to message from content script; responds with label
@@ -148,9 +154,13 @@ chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.greeting == "hello")
       console.log('sending response');
-      console.log(label);
+      // console.log(label);
       sendResponse({label: label});
   });
+
+
+
+
 
   // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
   //   chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
@@ -166,28 +176,6 @@ chrome.runtime.onMessage.addListener(
 
 
 
-// don't delete this bc i might use the format later
-// tries to send message to current tab when a new window is opened. doesn't get received by the tab.
-// chrome.windows.onCreated.addListener(newWindow);
-
-// function newWindow(window) {
-//     console.log('new window');
-//     console.log(window);
-
-
-//     chrome.tabs.query({
-//         active: true, 
-//         currentWindow: true 
-//         },
-//         function (tabs) {
-//             console.log(tabs);
-//             console.log(tabs[0].id);
-            
-//             chrome.tabs.sendMessage(tabs[0].id, {greeting: 'background'}, function(response) {
-//                 console.log(response.msg);
-//             });
-//         });
-// }
 
 
 
@@ -210,6 +198,5 @@ chrome.runtime.onMessage.addListener(
 // //   background(255);
 // //   image(capture, 300, 300, 320, 240);
 // }
-
 
 
