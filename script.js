@@ -25,6 +25,7 @@ function setup() {
     
     myAudio.src = chrome.runtime.getURL("song.mp3");
     control = new Control();
+    //myAudio.play();
     //looper.start();
     isActive = true;
 
@@ -90,15 +91,16 @@ class Control {
     display() {
         if (this.isTouched) {
         this.displayTrue();
+        myAudio.play();
         }
         else {
         this.displayFalse();
+
         }
     }
     //modify these methods
     displayTrue() {
         text('stop touching face!', 50, 50);
-        myAudio.play();
     }
     displayFalse() {
         text('nice job :)', 50, 50);
