@@ -40,6 +40,14 @@ console.log('popup running');
 
 let capture;
 let label = 'temp label from popup';
+let isActive = false;
+
+let button = document.getElementById("button");
+button.onclick = function() {
+  isActive = !isActive;
+  console.log(isActive);
+};
+
 
 //ask background for label
 chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
