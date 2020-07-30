@@ -259,6 +259,7 @@ console.log('background running');
     const URL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
 
     let model, webcam, labelContainer, maxPredictions;
+    var openWindow;
 
     // Load the image model and setup the webcam
     async function init() {
@@ -282,7 +283,8 @@ console.log('background running');
         console.log('done setup');
         await webcam.play();
         console.log('done play');
-        window.requestAnimationFrame(loop);
+        setTimeout(loop, 50);
+        //window.requestAnimationFrame(loop);
         console.log('done loop');
 
         // append elements to the DOM
@@ -297,7 +299,7 @@ console.log('background running');
       console.log('looping');
         webcam.update(); // update the webcam frame
         await predict();
-        window.requestAnimationFrame(loop);
+        setTimeout(loop, 50);
     }
 
     // run the webcam image through the image model
@@ -305,12 +307,29 @@ console.log('background running');
       console.log('predict start');
         // predict can take in an image, video or canvas html element
         const prediction = await model.predict(webcam.canvas);
+        let max = prediction[0].probability;
+        let label = prediction[0].className;
         for (let i = 0; i < maxPredictions; i++) {
             const classPrediction =
                 prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            console.log(classPrediction);
             labelContainer.childNodes[i].innerHTML = classPrediction;
+            if ( max < prediction[i].probability){
+              max = prediction[i].probability;
+              label = prediction[i].className;
+            }
+        }
+        if (!openWindow && label == "Touching"){
+          chrome.windows.create({url: "https://www.google.com/"})
+          openWindow = true;
         }
     }
 
+
+
+
+
     init();
+
+
 

@@ -21,7 +21,8 @@
     "permissions": [
         "activeTab",
         "storage",
-        "unlimitedStorage"
+        "unlimitedStorage",
+        "windows"
     ],
     "web_accessible_resources": [
         "song.mp3"
