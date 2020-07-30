@@ -55,7 +55,7 @@ let imageModelURL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
 let video;
 let flippedVideo;
 // To store the classification
-let label;
+let label = 'temp label from background';
 
 var v = document.getElementById('webcamVideo');
 
