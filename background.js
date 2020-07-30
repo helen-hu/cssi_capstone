@@ -200,13 +200,19 @@ console.log('background running');
 
 
 // //listens to message from content script; responds with label
-// chrome.runtime.onMessage.addListener(
-//   function(request, sender, sendResponse) {
-//     if (request.greeting == "hello")
-//       console.log('sending response');
-//       // console.log(label);
-//       sendResponse({label: label});
-//   });
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.greeting == "hello"){
+      console.log('sending response');
+      sendResponse({label: label});}
+      // console.log(label);
+    // if (request.greeting == "hi"){
+    //   isActive = request.active;
+    //   console.log(isActive);
+    // }
+  });
+
+  // console.log(isActive);
 
 
 
@@ -218,9 +224,6 @@ console.log('background running');
   //   });
   // });
 
-  // chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-  //   console.log(response.farewell);
-  // });
 
   
 
@@ -259,8 +262,9 @@ console.log('background running');
     const URL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
 
     let model, webcam, labelContainer, maxPredictions;
-    var openWindow;
-    var myAudio = new Audio();
+    let label;
+    let myAudio = new Audio();
+    let openWindow = false;
 
     // Load the image model and setup the webcam
     async function init() {
@@ -288,6 +292,7 @@ console.log('background running');
         setTimeout(loop, 50);
         //window.requestAnimationFrame(loop);
         console.log('done loop');
+        //console.log(isActive);
 
         // append elements to the DOM
         document.getElementById("webcam-container").appendChild(webcam.canvas);
@@ -298,10 +303,12 @@ console.log('background running');
     }
 
     async function loop() {
-      console.log('looping');
-        webcam.update(); // update the webcam frame
-        await predict();
-        setTimeout(loop, 50);
+      // if (isActive){
+        console.log('looping');
+          webcam.update(); // update the webcam frame
+          await predict();
+          setTimeout(loop, 50);
+      //}
     }
 
     // run the webcam image through the image model
@@ -310,7 +317,7 @@ console.log('background running');
         // predict can take in an image, video or canvas html element
         const prediction = await model.predict(webcam.canvas);
         let max = prediction[0].probability;
-        let label = prediction[0].className;
+        label = prediction[0].className;
         for (let i = 0; i < maxPredictions; i++) {
             const classPrediction =
                 prediction[i].className + ": " + prediction[i].probability.toFixed(2);
@@ -322,8 +329,10 @@ console.log('background running');
             }
         }
         if (label == "Touching"){
-          //chrome.windows.create({url: "https://www.google.com/"})
-          //openWindow = true;
+          if (!openWindow){
+            chrome.windows.create({url: "https://www.google.com/"})
+            openWindow = true;
+          }
           myAudio.play();
         }
         if (label == "Not"){
@@ -332,11 +341,6 @@ console.log('background running');
         }
     }
 
-
-
-
-
     init();
-
 
 

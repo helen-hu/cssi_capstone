@@ -46,15 +46,19 @@ let button = document.getElementById("button");
 button.onclick = function() {
   isActive = !isActive;
   console.log(isActive);
+  // chrome.runtime.sendMessage({greeting: "hi", active: isActive}, function(response) {
+  //   console.log(response.farewell);
+  // });
 };
 
-
 //ask background for label
-chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-  console.log('got response');
-  console.log(response);
-  label = response.label;
-});
+function getLabel() {
+  chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+    console.log('got response');
+    console.log(response);
+    label = response.label;
+  });
+}
 
 console.log(label);
 
@@ -67,6 +71,7 @@ function setup() {
 
 function draw() {
   background(0);
+  getLabel();
 
   push();
   translate(width, 0);
