@@ -323,7 +323,7 @@ chrome.runtime.onMessage.addListener(
                 prediction[i].className + ": " + prediction[i].probability.toFixed(2);
             console.log(classPrediction);
             labelContainer.childNodes[i].innerHTML = classPrediction;
-            if (prediction[i].probability > 0.7){
+            if (prediction[i].probability > 0.8){
               max = prediction[i].probability;
               label = prediction[i].className;
             }
