@@ -12,9 +12,9 @@ console.log('popup running');
 // // }
 
 // function setup() {
-//   createCanvas(300, 300);
-//   colorMode(HSB, 360, 100, 100);
-//   noStroke();
+  // createCanvas(300, 300);
+  // colorMode(HSB, 360, 100, 100);
+  // noStroke();
 
 //   //looper.start();
 //   isActive = true;
@@ -36,17 +36,39 @@ console.log('popup running');
   //   });
   // });
 
+
+
 let capture;
+let label = 'temp label from popup';
+
+//ask background for label
+chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+  console.log('got response');
+  console.log(response);
+  label = response.label;
+});
+
+console.log(label);
 
 function setup() {
-  createCanvas(320, 240);
+  createCanvas(260, 260);
   capture = createCapture(VIDEO);
   capture.size(320, 240);
   capture.hide();
 }
 
 function draw() {
-  background(255);
-  // scale(-1.0,1.0);
-  image(capture, 0, 0, width, height);
+  background(0);
+
+  push();
+  translate(width, 0);
+  scale(-1.0,1.0);
+  image(capture, 0, 0);
+  pop();
+
+
+  fill(255);
+  textSize(16);
+  textAlign(CENTER);
+  text(label, width / 2, height - 4);
 }

@@ -8,30 +8,45 @@ console.log('content script start');
 var myAudio = new Audio();
 
 
-let label = '';
+let label;
 
 let control;
 let isActive;
 
+
+function setLabel() {
+    //ask background for label
+    chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+    label = response.label;
+    });
+}
+
 function setup() {
+    
     myAudio.src = chrome.runtime.getURL("song.mp3");
     control = new Control();
     //looper.start();
     isActive = true;
 
-    getLabel();
+    // getLabel();
+    console.log(label);
+
+    createCanvas(300, 300);
+    colorMode(HSB, 360, 100, 100);
+    noStroke();
 }   
 
 
 function draw() {
     background(0);
+    setLabel();
 
     //test circle
-    fill(0);
-    ellipse(100, 100, 50);
+    fill(50);
+    ellipse(width/2, height/2, 50, 50);
     
     // Draw the label
-    fill(255);
+    fill(100);
     textSize(16);
     textAlign(CENTER);
     text(label, 100, 100);
@@ -40,21 +55,13 @@ function draw() {
         setCondition();
         control.display();
     }
-}
-
-
-function getLabel() {
-    //ask background for label
-    chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-        console.log('got response');
-        console.log(response);
-    });
+    
 }
 
 
 function checkCondition() {
-    // return collidePointCircle(mouseX, mouseY, width/2, height/2, 100)
-    return label == 'Touching';
+    return collidePointCircle(mouseX, mouseY, width/2, height/2, 100);
+    // return label == 'Touching';
 }
 
 function setCondition() {
@@ -65,6 +72,7 @@ function setCondition() {
         control.setFalse(); 
     }
 } 
+
 
 class Control {
     constructor() {
@@ -82,7 +90,6 @@ class Control {
     display() {
         if (this.isTouched) {
         this.displayTrue();
-        // myAudio.play();
         }
         else {
         this.displayFalse();
@@ -109,6 +116,3 @@ class Control {
 //         sendResponse({farewell: "goodbye"});
 //     });
 
-chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-    console.log("hi");
-  });
