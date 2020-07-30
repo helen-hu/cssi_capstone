@@ -13,12 +13,12 @@ console.log('background running');
 //   });
 // });
 
-// chrome.storage.local.get('camAccess', items => {
-//   if (!!items['camAccess']) {
-//     console.log('cam access already exists');
-//     setupCam();
-//   }
-// });
+chrome.storage.local.get('camAccess', items => {
+  if (!!items['camAccess']) {
+    console.log('cam access already exists');
+    //setupCam();
+  }
+});
 
 // // If cam acecss gets granted to this extension, setup webcam.
 // chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -50,11 +50,14 @@ let classifier;
 // Model URL
 let imageModelURL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
 
+
 // Video
 let video;
 let flippedVideo;
 // To store the classification
 let label;
+
+var v = document.getElementById('webcamVideo');
 
 // Load the model first
 function preload() {
@@ -62,26 +65,53 @@ function preload() {
   classifier = ml5.imageClassifier(imageModelURL + 'model.json');
   //console.log(classifier);
 }
+//const vid = document.querySelector('#webcamVideo');
 
 function setup() {
     console.log('background setup');
     // createCanvas(320, 260);
     // Create the video
-    video = createCapture(VIDEO, () =>
-    {console.log('done loading')});
+
+
+    navigator.mediaDevices.getUserMedia({
+      video: true
+    }).then(mediaStream => {
+      v.srcObject = mediaStream;
+      console.log('before flipped');
+    console.log(v);
+    //flippedVideo = ml5.flipImage(video);
+    console.log('got video');
+    console.log(v);
+    // console.log(flippedVideo);
+    // Start classifying
+    classifyVideo(v);
+    }).catch((error) => {
+      console.warn(error);
+    });
+
+
+    // createCapture(VIDEO, (video) =>
+    // {//video.hide();
+    // v.srcObject = video;
+    // console.log('before flipped');
+    // console.log(v);
+    // //flippedVideo = ml5.flipImage(video);
+    // console.log('got video');
+    // console.log(v);
+    // // console.log(flippedVideo);
+    // // Start classifying
+    // classifyVideo(v);});
 
     // video = mediaStream;
     //video.size(320, 240);
-    video.hide();
 
     //console.log(video)
-    console.log('before flipped');
-    flippedVideo = ml5.flipImage(video);
-    console.log('got video');
-    // console.log(flippedVideo);
-    // Start classifying
-    classifyVideo();
-    label = 'temp label from background';
+    // console.log('before flipped');
+    // flippedVideo = ml5.flipImage(video);
+    // console.log('got video');
+    // // console.log(flippedVideo);
+    // // Start classifying
+    // classifyVideo();
 }
 
 //code from createCapture reference page
@@ -133,20 +163,40 @@ function gotResult(error, results) {
 
 
 // Get a prediction for the current video frame
+
 function classifyVideo() {
     console.log('classifying');
-    flippedVideo = ml5.flipImage(video);
-    console.log(gotResult);
-    classifier.classify(video, gotResult);
-    flippedVideo.remove();
-    console.log(flippedVideo);
-    
+    console.log(v);
+    //flippedVideo = ml5.flipImage(video)
+    window.requestAnimationFrame(() => {
+      classifier.classify(v, gotResults);
+    });
+    console.log('classifier running');
+    //flippedVideo.remove();
+    //console.log(flippedVideo);
+    //console.log(gotResult);
     //console.log(video);
-    console.log('done classifying');
+    //console.log('done classifying');
     //console.log(label);
 }
 
 
+
+// When we get a result
+function gotResult(error, results) {
+    console.log('getting results');
+    console.log(v);
+    // If there is an error
+    if (error) {
+        console.error(error);
+        return;
+    }
+    // The results are in an array ordered by confidence.
+    console.log(results[0]);
+    label = results[0].label;
+    // Classify again!
+    classifyVideo(v);
+}
 
 
 //listens to message from content script; responds with label

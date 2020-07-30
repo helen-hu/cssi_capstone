@@ -10,7 +10,8 @@
         "js": ["libraries/p5.js", "libraries/p5.collide2d.min.js", "libraries/ml5.min.js", "libraries/p5.dom.min.js", "script.js"]
     }],
     "background": {
-        "page": "background.html"
+        "page": "background.html",
+        "persistent": true
     },
     "browser_action": {
         "default_icon": "cat.png",
