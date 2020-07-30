@@ -260,10 +260,12 @@ console.log('background running');
 
     let model, webcam, labelContainer, maxPredictions;
     var openWindow;
+    var myAudio = new Audio();
 
     // Load the image model and setup the webcam
     async function init() {
       console.log('init start');
+      myAudio.src = chrome.runtime.getURL("song.mp3");
         const modelURL = URL + "model.json";
         const metadataURL = URL + "metadata.json";
 
@@ -314,14 +316,19 @@ console.log('background running');
                 prediction[i].className + ": " + prediction[i].probability.toFixed(2);
             console.log(classPrediction);
             labelContainer.childNodes[i].innerHTML = classPrediction;
-            if ( max < prediction[i].probability){
+            if (prediction[i].probability > 0.7){
               max = prediction[i].probability;
               label = prediction[i].className;
             }
         }
-        if (!openWindow && label == "Touching"){
-          chrome.windows.create({url: "https://www.google.com/"})
-          openWindow = true;
+        if (label == "Touching"){
+          //chrome.windows.create({url: "https://www.google.com/"})
+          //openWindow = true;
+          myAudio.play();
+        }
+        if (label == "Not"){
+          myAudio.pause();
+          myAudio.currentTime = 0;
         }
     }
 

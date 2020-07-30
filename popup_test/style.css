@@ -19,7 +19,8 @@ table {
 .popup {
 	color: black;
 	text-align: center;
-	padding: 0.5em;
+  padding: 0.5em;
+  transform: translateY(-30px);
 }
 
 h3 {
@@ -39,7 +40,7 @@ p {
 
 .llabel p {
 	display: inline-block;
-  transform: translateY(5px);
+  transform: translateY(8px);
 /* 	margin: 0 0.4em; */
   padding: 0.5em;
   padding-bottom: 30px;

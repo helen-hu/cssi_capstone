@@ -25,6 +25,6 @@
         "windows"
     ],
     "web_accessible_resources": [
-        "song.mp3"
+        "stop.mp3"
     ]
 }
