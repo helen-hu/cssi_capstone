@@ -247,7 +247,10 @@ console.log('background running');
 // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
 // the link to your model provided by Teachable Machine export panel
-const URL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
+
+// old machine
+// const URL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
+const URL = 'https://teachablemachine.withgoogle.com/models/X8GSvDN7e/';
 
 let model, webcam, labelContainer, maxPredictions;
 let label = 'temp label background';
