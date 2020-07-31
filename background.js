@@ -244,172 +244,173 @@ console.log('background running');
 
 
 
-    // More API functions here:
-    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+// More API functions here:
+// https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
-    // the link to your model provided by Teachable Machine export panel
-    const URL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
+// the link to your model provided by Teachable Machine export panel
+const URL = 'https://teachablemachine.withgoogle.com/models/CJ7DXQnyz/';
 
-    let model, webcam, labelContainer, maxPredictions;
-    let label;
-    let myAudio = new Audio();
-    let openWindow = false;
-    let isActive = false;
+let model, webcam, labelContainer, maxPredictions;
+let label = 'temp label background';
+let myAudio = new Audio();
+let openWindow = false;
+let isActive = false;
+
+
+// //listens to message from content script; responds with label
 
 
 
-    // //listens to message from content script; responds with label
-  chrome.runtime.onMessage.addListener(
+// chrome.runtime.onConnect.addListener(function(port) {
+//   console.assert(port.name == "toggleState");
+//   port.onMessage.addListener(function(msg) {
+//     console.log('got message');
+//     console.log(msg.state);
+//     if (msg.state == true)
+//       isActive = true;
+//     else
+//       isActive = false;
+//     // console.log(isActive);
+//   });
+// });
+
+function getState() {
+  chrome.storage.sync.get(['state'], function(result) {
+    console.log('State currently is ' + result.state);
+    if (result.state) {
+      // console.log('here');
+      isActive = true;
+    }
+    else {
+      // console.log('else');
+      isActive = false;
+    }
+  });
+}
+
+chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.greeting == "hello" && isActive){
-      console.log('sending response');
-      sendResponse({label: label});}
-      // console.log(label);
-    // if (request.greeting == "hi"){
-    //   isActive = request.active;
-    //   console.log(isActive);
-    // }
+    if (request.greeting == "hello") {
+      console.log('sending the label ' + label);
+      sendResponse({label: label});
+    }
+    if (request.greeting == "hi") {
+      console.log('got button click');
+      getState();
+    }
   });
 
-
-    // chrome.runtime.onConnect.addListener(function(port) {
-    //   console.assert(port.name == "toggleState");
-    //   port.onMessage.addListener(function(msg) {
-    //     console.log('got message');
-    //     console.log(msg.state);
-    //     if (msg.state == true)
-    //       isActive = true;
-    //     else
-    //       isActive = false;
-    //     // console.log(isActive);
-    //   });
-    // });
-
-  function getState(){
-    chrome.storage.sync.get(['state'], function(result) {
-      //console.log('State currently is ' + result.state);
-      if (result.state) {
-        console.log('here');
-        isActive = true;
-      }
-      else {
-        console.log('else');
-        isActive = false;
-      }
-    });
-  }
-
-  async function runCam(){
-    const flip = true; // whether to flip the webcam
-        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-        // if (isActive) {
-        // console.log(isActive);
-        await webcam.setup(); // request access to the webcam
-        console.log('done setup');
-        await webcam.play();
-        console.log('done play');
-  }
+async function runCam() {
+  const flip = true; // whether to flip the webcam
+      webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+      // if (isActive) {
+      // console.log(isActive);
+      await webcam.setup(); // request access to the webcam
+      console.log('done setup');
+      await webcam.play();
+      console.log('done play');
+}
 
 
-    // Load the image model and setup the webcam
-    async function init() {
-      console.log('init start');
-      myAudio.src = chrome.runtime.getURL("song.mp3");
-        const modelURL = URL + "model.json";
-        const metadataURL = URL + "metadata.json";
+// Load the image model and setup the webcam
+async function init() {
+  console.log('init start');
+  myAudio.src = chrome.runtime.getURL("song.mp3");
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
 
-        getState();
+    getState();
 
-        // load the model and metadata
-        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
-        // or files from your local hard drive
-        // Note: the pose library adds "tmImage" object to your window (window.tmImage)
-        model = await tmImage.load(modelURL, metadataURL);
-        maxPredictions = model.getTotalClasses();
+    // load the model and metadata
+    // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+    // or files from your local hard drive
+    // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
 
-        // Convenience function to setup a webcam
-        //const flip = true; // whether to flip the webcam
-        // webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-        // // if (isActive) {
-        // // console.log(isActive);
-        // await webcam.setup(); // request access to the webcam
-        // console.log('done setup');
-        // await webcam.play();
-        // console.log('done play');
-        runCam();
-        setTimeout(loop, 50);
-        //window.requestAnimationFrame(loop);
-        //console.log(isActive);
-        console.log('done loop');
-        }
-        //console.log(isActive);
-
-        // append elements to the DOM
-        // document.getElementById("webcam-container").appendChild(webcam.canvas);
-        // labelContainer = document.getElementById("label-container");
-        // for (let i = 0; i < maxPredictions; i++) { // and class labels
-        //     labelContainer.appendChild(document.createElement("div"));
-
-    async function loop() {
-      // if (isActive){
-        //console.log('looping');
-        getState();
-        console.log(isActive);
-        // if (isActive) {
-        //   console.log("camera on")
-        //   // runCam();
-        webcam.update(); // update the webcam frame
-        await predict();
-        setTimeout(loop, 50);
-        // }else{
-        //   console.log("camera off")
-        //   // webcam.pause();
-        //   setTimeout(loop, 50);
-        // }
-          //console.log(isActive);
-      //}
+    // Convenience function to setup a webcam
+    //const flip = true; // whether to flip the webcam
+    // webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+    // // if (isActive) {
+    // // console.log(isActive);
+    // await webcam.setup(); // request access to the webcam
+    // console.log('done setup');
+    // await webcam.play();
+    // console.log('done play');
+    runCam();
+    setTimeout(loop, 50);
+    //window.requestAnimationFrame(loop);
+    //console.log(isActive);
+    console.log('done loop');
     }
+    //console.log(isActive);
 
-    // run the webcam image through the image model
-    async function predict() {
-      console.log('predict start');
-        //getState();
-        // predict can take in an image, video or canvas html element
-        const prediction = await model.predict(webcam.canvas);
-        let max = prediction[0].probability;
-        label = prediction[0].className;
-        for (let i = 0; i < maxPredictions; i++) {
-            const classPrediction =
-                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-            //console.log(classPrediction);
-            getState();
-            //labelContainer.childNodes[i].innerHTML = classPrediction;
-            if (prediction[i].probability > 0.8){
-              max = prediction[i].probability;
-              label = prediction[i].className;
-            }
-        }
-        getState();
-        if (label == "Touching" && isActive){
-          // if (!openWindow){
-          //   chrome.windows.create({url: "https://www.google.com/"})
-          //   openWindow = true;
-          // }
-          myAudio.play();
-          getState();
-        }
-        if (!isActive){
-          myAudio.pause();
-          getState();
-          myAudio.currentTime = 0;
-        }
-        if (label == "Not" && isActive){
-          myAudio.pause();
-          getState();
-          myAudio.currentTime = 0;
-        }
+    // append elements to the DOM
+    // document.getElementById("webcam-container").appendChild(webcam.canvas);
+    // labelContainer = document.getElementById("label-container");
+    // for (let i = 0; i < maxPredictions; i++) { // and class labels
+    //     labelContainer.appendChild(document.createElement("div"));
+
+async function loop() {
+  // if (isActive){
+    //console.log('looping');
+    getState();
+    console.log(isActive);
+    // if (isActive) {
+    //   console.log("camera on")
+    //   // runCam();
+    webcam.update(); // update the webcam frame
+    await predict();
+    setTimeout(loop, 50);
+    // }else{
+    //   console.log("camera off")
+    //   // webcam.pause();
+    //   setTimeout(loop, 50);
+    // }
+      //console.log(isActive);
+  //}
+}
+
+// run the webcam image through the image model
+async function predict() {
+  console.log('predict start');
+  //getState();
+  // predict can take in an image, video or canvas html element
+  const prediction = await model.predict(webcam.canvas);
+  let max = prediction[0].probability;
+  label = prediction[0].className;
+  for (let i = 0; i < maxPredictions; i++) {
+    const classPrediction =
+      prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+    //console.log(classPrediction);
+    getState();
+    //labelContainer.childNodes[i].innerHTML = classPrediction;
+    if (prediction[i].probability > 0.8){
+      max = prediction[i].probability;
+      label = prediction[i].className;
     }
+  }
+  getState();
+  if (label == "Touching" && isActive){
+    // if (!openWindow){
+    //   chrome.windows.create({url: "https://www.google.com/"})
+    //   openWindow = true;
+    // }
+    myAudio.play();
+    // getState();
+  }
+  if (!isActive){
+    myAudio.pause();
+    // getState();
+    myAudio.currentTime = 0;
+  }
+  if (label == "Not" && isActive){
+    myAudio.pause();
+    // getState();
+    myAudio.currentTime = 0;
+  }
+}
 
-    init();
+init();
 
 

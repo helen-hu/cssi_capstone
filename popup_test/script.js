@@ -39,40 +39,45 @@ console.log('popup running');
 
 
 let capture;
-let label = '';
-let isActive = false;
-
-
+let label = 'temp label popup';
+// let isActive = false;
 
 let button = document.getElementById("button");
 
 
-
-
+// changes state every time button is clicked
 button.onclick = function() {
   console.log('button clicked');
-  isActive = !isActive;
-  console.log(isActive);
-  chrome.storage.sync.set({state: isActive}, function() {
-    console.log('State is set to ' + isActive);
-    console.log(button.checked);
+  // isActive = !isActive;
+  // console.log(button.checked);
+  chrome.storage.sync.set({state: button.checked}, function() {
+    console.log('State is set to ' + button.checked);
+    // console.log(button.checked);
   });
-  // chrome.runtime.sendMessage({greeting: "hi", active: isActive}, function(response) {
-  //   console.log(response.farewell);
-  // });
+  chrome.runtime.sendMessage({greeting: "hi"}, function(response) {
+    console.log('button click sent to bg');
+  });
 };
 
+// sets button state to stored state
 chrome.storage.sync.get(['state'], function(result) {
-  //console.log('State currently is ' + result.state);
+  console.log('State currently is ' + result.state);
   if (result.state) {
-    console.log('here');
     button.checked = true;
   }
   else {
-    console.log('else');
     button.checked = false;
   }
 });
+
+// syntax for chrome.storage
+// let value = 'test value';
+// chrome.storage.sync.set({key: value}, function() {
+//   console.log('Value is set to ' + value);
+// });
+// chrome.storage.sync.get(['key'], function(result) {
+//   console.log('Value currently is ' + result.key);
+// });
 
 
 // document.addEventListener("DOMContentLoaded", () => {
@@ -101,7 +106,8 @@ chrome.storage.sync.get(['state'], function(result) {
 // }
 
 
-//ask background for label
+
+//ask background for label, and set label
 function getLabel() {
   chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
     // console.log('got response');
@@ -109,8 +115,6 @@ function getLabel() {
     label = response.label;
   });
 }
-
-console.log(label);
 
 function setup() {
   createCanvas(260, 260);
@@ -122,6 +126,7 @@ function setup() {
 function draw() {
   background(0);
   getLabel();
+  console.log(label);
 
   push();
   translate(width, 0);
@@ -129,8 +134,8 @@ function draw() {
   image(capture, 0, 0);
   pop();
 
-  if (!isActive){
-    label = ""
+  if (!button.checked){
+    label = 'Face-touching detection is OFF';
   }
 
   fill(255);
