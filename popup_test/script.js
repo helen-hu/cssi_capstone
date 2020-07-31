@@ -40,6 +40,7 @@ console.log('popup running');
 
 let capture;
 let label = 'temp label popup';
+let caption;
 // let isActive = false;
 
 let button = document.getElementById("button");
@@ -135,11 +136,19 @@ function draw() {
   pop();
 
   if (!button.checked){
-    label = 'Face-touching detection is OFF';
+    caption = 'Face-touching detection is OFF';
   }
-
+  else {
+    if (label == 'Not') {
+      caption = 'Not touching- keep it up!';
+    }
+    if (label == 'Touching') {
+      caption = 'Oops! Keep those hands off.';
+    }
+  }
+  
   fill(255);
   textSize(16);
   textAlign(CENTER);
-  text(label, width / 2, height - 4);
+  text(caption, width / 2, height - 4);
 }

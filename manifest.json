@@ -1,7 +1,8 @@
 { 
     "manifest_version": 2,
-    "name": "CSSI extension",
+    "name": "DTYF (don't touch your face)",
     "version": "0.1",
+    "description": "Alerts you when you touch your face! By Jenn Wang & Helen Hu for CSSI 2020.",
     
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     
