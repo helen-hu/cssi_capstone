@@ -1,6 +1,5 @@
 console.log('background running');
 
-
 // bruh this works!
 // Do first-time setup to gain access to webcam, if necessary.
 // chrome.runtime.onInstalled.addListener((details) => {
@@ -280,10 +279,12 @@ function getState() {
     if (result.state) {
       // console.log('here');
       isActive = true;
+      // webcam.play();
     }
     else {
       // console.log('else');
       isActive = false;
+      // webcam.stop();
     }
   });
 }
@@ -300,16 +301,16 @@ chrome.runtime.onMessage.addListener(
     }
   });
 
-async function runCam() {
-  const flip = true; // whether to flip the webcam
-      webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-      // if (isActive) {
-      // console.log(isActive);
-      await webcam.setup(); // request access to the webcam
-      console.log('done setup');
-      await webcam.play();
-      console.log('done play');
-}
+// async function runCam() {
+//   const flip = true; // whether to flip the webcam
+//       webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+//       // if (isActive) {
+//       // console.log(isActive);
+//       await webcam.setup(); // request access to the webcam
+//       console.log('done setup');
+//       await webcam.play();
+//       console.log('done play');
+// }
 
 
 // Load the image model and setup the webcam
@@ -329,15 +330,15 @@ async function init() {
     maxPredictions = model.getTotalClasses();
 
     // Convenience function to setup a webcam
-    //const flip = true; // whether to flip the webcam
-    // webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-    // // if (isActive) {
-    // // console.log(isActive);
-    // await webcam.setup(); // request access to the webcam
-    // console.log('done setup');
-    // await webcam.play();
-    // console.log('done play');
-    runCam();
+    const flip = true; // whether to flip the webcam
+    webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+    // if (isActive) {
+    // console.log(isActive);
+    await webcam.setup(); // request access to the webcam
+    console.log('done setup');
+    await webcam.play();
+    console.log('done play');
+    // runCam();
     setTimeout(loop, 50);
     //window.requestAnimationFrame(loop);
     //console.log(isActive);
