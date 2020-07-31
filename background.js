@@ -276,20 +276,33 @@ let isActive = false;
 //   });
 // });
 
-function getState() {
-  chrome.storage.sync.get(['state'], function(result) {
-    console.log('State currently is ' + result.state);
-    if (result.state) {
+async function getState(state) {
+  // chrome.storage.sync.get(['state'], async function(result) {
+    // console.log('State currently is ' + result.state);
+    if (state && !isActive) {
       // console.log('here');
       isActive = true;
-      // webcam.play();
+      // Convenience function to setup a webcam
+      const flip = true; // whether to flip the webcam
+      webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+      // if (isActive) {
+      // console.log(isActive);
+      await webcam.setup(); // request access to the webcam
+      console.log('done setup');
+      await webcam.play();
+      console.log('done play');
+      // runCam();
+      setTimeout(loop, 50);
+      //window.requestAnimationFrame(loop);
+      //console.log(isActive);
+      console.log('done loop');
     }
     else {
       // console.log('else');
       isActive = false;
-      // webcam.stop();
     }
-  });
+    chrome.storage.sync.set({state: state});
+// });
 }
 
 chrome.runtime.onMessage.addListener(
@@ -299,8 +312,9 @@ chrome.runtime.onMessage.addListener(
       sendResponse({label: label});
     }
     if (request.greeting == "hi") {
-      console.log('got button click');
-      getState();
+      console.log(request.state);
+      // isActive = request.state;
+      getState(request.state);
     }
   });
 
@@ -323,8 +337,7 @@ async function init() {
     const modelURL = URL + "model.json";
     const metadataURL = URL + "metadata.json";
 
-    getState();
-
+  
     // load the model and metadata
     // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
     // or files from your local hard drive
@@ -332,21 +345,24 @@ async function init() {
     model = await tmImage.load(modelURL, metadataURL);
     maxPredictions = model.getTotalClasses();
 
+    getState(false);
+
     // Convenience function to setup a webcam
-    const flip = true; // whether to flip the webcam
-    webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-    // if (isActive) {
-    // console.log(isActive);
-    await webcam.setup(); // request access to the webcam
-    console.log('done setup');
-    await webcam.play();
-    console.log('done play');
-    // runCam();
-    setTimeout(loop, 50);
-    //window.requestAnimationFrame(loop);
-    //console.log(isActive);
-    console.log('done loop');
-    }
+
+    // const flip = true; // whether to flip the webcam
+    // webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+    // // if (isActive) {
+    // // console.log(isActive);
+    // await webcam.setup(); // request access to the webcam
+    // console.log('done setup');
+    // await webcam.play();
+    // console.log('done play');
+    // // runCam();
+    // setTimeout(loop, 50);
+    // //window.requestAnimationFrame(loop);
+    // //console.log(isActive);
+    // console.log('done loop');
+    // }
     //console.log(isActive);
 
     // append elements to the DOM
@@ -354,18 +370,26 @@ async function init() {
     // labelContainer = document.getElementById("label-container");
     // for (let i = 0; i < maxPredictions; i++) { // and class labels
     //     labelContainer.appendChild(document.createElement("div"));
-
+}
 async function loop() {
   // if (isActive){
     //console.log('looping');
-    getState();
+    // getState();
     console.log(isActive);
     // if (isActive) {
     //   console.log("camera on")
     //   // runCam();
-    webcam.update(); // update the webcam frame
-    await predict();
-    setTimeout(loop, 50);
+    
+
+    if (isActive) {
+      webcam.update(); // update the webcam frame
+      await predict();
+      setTimeout(loop, 50);
+    }
+    else if (webcam) {
+      webcam.stop();
+      webcam = null;
+    }
     // }else{
     //   console.log("camera off")
     //   // webcam.pause();
@@ -387,14 +411,15 @@ async function predict() {
     const classPrediction =
       prediction[i].className + ": " + prediction[i].probability.toFixed(2);
     //console.log(classPrediction);
-    getState();
+    // getState();
     //labelContainer.childNodes[i].innerHTML = classPrediction;
     if (prediction[i].probability > 0.8){
       max = prediction[i].probability;
       label = prediction[i].className;
     }
+    console.log(label);
   }
-  getState();
+  // getState();
   if (label == "Touching" && isActive){
     // if (!openWindow){
     //   chrome.windows.create({url: "https://www.google.com/"})
@@ -415,6 +440,6 @@ async function predict() {
   }
 }
 
-init();
 
+init();
 

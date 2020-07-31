@@ -51,11 +51,13 @@ button.onclick = function() {
   console.log('button clicked');
   // isActive = !isActive;
   // console.log(button.checked);
-  chrome.storage.sync.set({state: button.checked}, function() {
-    console.log('State is set to ' + button.checked);
-    // console.log(button.checked);
-  });
-  chrome.runtime.sendMessage({greeting: "hi"});
+  // chrome.storage.sync.set({state: button.checked}, function() {
+  //   console.log('State is set to ' + button.checked);
+  //   // console.log(button.checked);
+    
+  // });
+  chrome.runtime.sendMessage({greeting: "hi", state: button.checked});
+  
 };
 
 // sets button state to stored state
