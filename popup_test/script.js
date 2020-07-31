@@ -55,6 +55,7 @@ button.onclick = function() {
   console.log(isActive);
   chrome.storage.sync.set({state: isActive}, function() {
     console.log('State is set to ' + isActive);
+    console.log(button.checked);
   });
   // chrome.runtime.sendMessage({greeting: "hi", active: isActive}, function(response) {
   //   console.log(response.farewell);
@@ -62,7 +63,7 @@ button.onclick = function() {
 };
 
 chrome.storage.sync.get(['state'], function(result) {
-  console.log('State currently is ' + result.state);
+  //console.log('State currently is ' + result.state);
   if (result.state) {
     console.log('here');
     button.checked = true;
