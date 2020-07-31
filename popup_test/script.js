@@ -39,7 +39,7 @@ console.log('popup running');
 
 
 let capture;
-let label = 'temp label from popup';
+let label = '';
 let isActive = false;
 
 
@@ -129,6 +129,9 @@ function draw() {
   image(capture, 0, 0);
   pop();
 
+  if (!isActive){
+    label = ""
+  }
 
   fill(255);
   textSize(16);
