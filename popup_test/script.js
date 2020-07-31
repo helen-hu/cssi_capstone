@@ -55,9 +55,7 @@ button.onclick = function() {
     console.log('State is set to ' + button.checked);
     // console.log(button.checked);
   });
-  chrome.runtime.sendMessage({greeting: "hi"}, function(response) {
-    console.log('button click sent to bg');
-  });
+  chrome.runtime.sendMessage({greeting: "hi"});
 };
 
 // sets button state to stored state
