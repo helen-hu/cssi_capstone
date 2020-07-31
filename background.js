@@ -199,18 +199,7 @@ console.log('background running');
 // }
 
 
-// //listens to message from content script; responds with label
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.greeting == "hello"){
-      console.log('sending response');
-      sendResponse({label: label});}
-      // console.log(label);
-    // if (request.greeting == "hi"){
-    //   isActive = request.active;
-    //   console.log(isActive);
-    // }
-  });
+
 
   // console.log(isActive);
 
@@ -265,6 +254,38 @@ chrome.runtime.onMessage.addListener(
     let label;
     let myAudio = new Audio();
     let openWindow = false;
+    let isActive;
+
+
+
+    // //listens to message from content script; responds with label
+  chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.greeting == "hello"){
+      console.log('sending response');
+      sendResponse({label: label});}
+      // console.log(label);
+    // if (request.greeting == "hi"){
+    //   isActive = request.active;
+    //   console.log(isActive);
+    // }
+  });
+
+
+    chrome.runtime.onConnect.addListener(function(port) {
+      console.assert(port.name == "toggleState");
+      port.onMessage.addListener(function(msg) {
+        console.log('got message');
+        console.log(msg.state);
+        if (msg.state == true)
+          isActive = true;
+        else
+          isActive = false;
+        // console.log(isActive);
+      });
+    });
+
+    console.log(isActive);
 
     // Load the image model and setup the webcam
     async function init() {
@@ -329,10 +350,10 @@ chrome.runtime.onMessage.addListener(
             }
         }
         if (label == "Touching"){
-          if (!openWindow){
-            chrome.windows.create({url: "https://www.google.com/"})
-            openWindow = true;
-          }
+          // if (!openWindow){
+          //   chrome.windows.create({url: "https://www.google.com/"})
+          //   openWindow = true;
+          // }
           myAudio.play();
         }
         if (label == "Not"){

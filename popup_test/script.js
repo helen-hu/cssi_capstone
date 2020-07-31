@@ -42,20 +42,69 @@ let capture;
 let label = 'temp label from popup';
 let isActive = false;
 
+
+
 let button = document.getElementById("button");
+
+
+
+
 button.onclick = function() {
+  console.log('button clicked');
   isActive = !isActive;
   console.log(isActive);
+  chrome.storage.sync.set({state: isActive}, function() {
+    console.log('State is set to ' + isActive);
+  });
   // chrome.runtime.sendMessage({greeting: "hi", active: isActive}, function(response) {
   //   console.log(response.farewell);
   // });
 };
 
+chrome.storage.sync.get(['state'], function(result) {
+  console.log('State currently is ' + result.state);
+  if (result.state) {
+    console.log('here');
+    button.checked = true;
+  }
+  else {
+    console.log('else');
+    button.checked = false;
+  }
+});
+
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   const button = document.getElementById("button");
+//   button.addEventListener('change', toggleState, false);
+//   // get current state and set approriately
+//   chrome.storage.sync.get(null, (storage) => {
+//       if (storage.isEnabled) {
+//           button.checked = true;
+//       }
+//       else {
+//           button.checked = false;
+//       }
+//   });
+// });
+
+// message background
+// function toggleState(e) {
+//   const port = chrome.runtime.connect({ name: "toggleState" });
+//   if (e.target.checked) {
+//       port.postMessage({ state: true });
+//   }
+//   else {
+//       port.postMessage({ state: false });
+//   }
+// }
+
+
 //ask background for label
 function getLabel() {
   chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-    console.log('got response');
-    console.log(response);
+    // console.log('got response');
+    // console.log(response);
     label = response.label;
   });
 }
